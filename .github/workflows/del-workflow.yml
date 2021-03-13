@@ -8,7 +8,7 @@ on:
 
       days: #要保留的天数
 
-        description: 'Number of days.'
+        description: '3'
 
         required: true
 
@@ -16,7 +16,7 @@ on:
 
       runs: #要为每个yml保留的个数
 
-        description: 'Number of runs.'
+        description: '8'
 
         required: true
 
