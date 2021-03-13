@@ -1,3 +1,6 @@
+# AutoSignMachine
+
+> Due to a third-party risk dispute, this script stopped sharing
 ### 使用插件 Pull App 同步
 需要安装 [![](https://prod.download/pull-18h-svg) Pull app](https://github.com/apps/pull) 插件。
 
