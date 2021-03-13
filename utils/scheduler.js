@@ -70,7 +70,7 @@ let scheduler = {
             let options = tasks[taskName].options || {}
             let willTime = moment(randomDate(options));
             // 任务的随机延迟时间
-            let waitTime = options.dev ? 0 : Math.floor(Math.random() * (options.waitTime || 300))
+            let waitTime = options.dev ? 0 : Math.floor(Math.random() * (options.waitTime || 3))
             if (options) {
                 if (options.isCircle || options.dev) {
                     willTime = moment().startOf('days');
@@ -90,7 +90,7 @@ let scheduler = {
             queues.push({
                 taskName: taskName,
                 taskState: 0,
-                willTime: willTime.format('YYYY-MM-DD HH:mm:ss'),
+                willTime: willTime.format('YYYY-MM-DD 00:00:00'),
                 waitTime: waitTime
             })
         }
@@ -233,7 +233,7 @@ let scheduler = {
         scheduler.taskKey = taskKey || 'default'
         if (scheduler.isTryRun) {
             console.info('!!!当前运行在TryRun模式，仅建议在测试时运行!!!')
-            await new Promise((resolve) => setTimeout(resolve, 3000))
+            await new Promise((resolve) => setTimeout(resolve, 30))
         }
         process.env['taskKey'] = [command, scheduler.taskKey].join('_')
         process.env['command'] = command
@@ -292,13 +292,13 @@ let scheduler = {
 
             // 任务执行
             // 多个任务同时执行会导致日志记录类型错误，所以仅在tryRun模式开启多个任务并发执行
-            let concurrency = scheduler.isTryRun ? 1 : 1
+            let concurrency = scheduler.isTryRun ? 1 : 5
             let queue = new PQueue({ concurrency });
             console.info('调度任务中', '并发数', concurrency)
             for (let task of will_tasks) {
                 scheduler.updateTaskFile(task, {
                     // 限制执行时长2hours，runStopTime用于防止因意外原因导致isRunning=true的任务被中断，而未改变状态使得无法再次执行的问题
-                    runStopTime: moment().add(2, 'hours').format('YYYY-MM-DD HH:mm:ss'),
+                    runStopTime: moment().add(2, 'hours').format('YYYY-MM-DD 00:00:00'),
                     isRunning: true
                 })
                 queue.add(async () => {
@@ -325,7 +325,7 @@ let scheduler = {
                                 isupdate = true
                             }
                             if (ttt.options.isCircle && ttt.options.intervalTime) {
-                                newTask.willTime = moment().add(ttt.options.intervalTime, 'seconds').format('YYYY-MM-DD HH:mm:ss')
+                                newTask.willTime = moment().add(ttt.options.intervalTime, 'seconds').format('YYYY-MM-DD 00:00:00')
                                 isupdate = true
                             }
                         } else {
